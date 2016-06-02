@@ -1,0 +1,29 @@
+import feedparser
+import subprocess
+import os
+import time
+
+os.system("echo 23 > /sys/class/gpio/export")
+os.system("echo out > /sys/class/gpio/gpio23/direction")
+os.system("echo 18 > /sys/class/gpio/export")
+os.system("echo out > /sys/class/gpio/gpio18/direction")
+
+USERNAME="ultramegaifb102@gmail.com"
+PASSWORD="Friday10"
+
+newmails = int(feedparser.parse("https://" + USERNAME + ":" + PASSWORD + "@mail.google.com/gmail/feed/atom")["feed"]["fullcount"])
+
+if newmails > 0:
+        os.system("echo 0 > /sys/class/gpio/gpio23/value")
+        os.system("echo 1 > /sys/class/gpio/gpio18/value")
+	print "You have " + str(newmails) + " new email(s)!"
+
+else:
+        os.system("echo 1 > /sys/class/gpio/gpio23/value")
+        os.system("echo 0 > /sys/class/gpio/gpio18/value")
+        print "No new emails!"
+
+time.sleep(5)
+
+os.system("echo 18 > /sys/class/gpio/unexport")
+os.system("echo 23 > /sys/class/gpio/unexport")
